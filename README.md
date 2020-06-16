@@ -568,8 +568,56 @@ plot(dt1[c("Home_G", "Away_G")], col = km$cluster)
 
 <img src = "https://user-images.githubusercontent.com/39016197/84826782-b60c0e80-afe0-11ea-9a83-9d3b42d71c3e.png" width = 410 height = 300>
 
-For the first plot of the results variable, we can see a clear pattern. The more goals that the home team scores, the more likey they are to win. However, the second plot that represents the cluster vectors, looks almost completely random.
+For the first plot of the results variable, we can see a clear pattern. The more goals that the home team scores, the more likey they are to win. However, the second plot that represents the cluster vectors, looks almost completely random. However, as well see below when looking at the shots plot, the goals isn't what messed up the clustering analysis.
 
+```
+plot(dt1[c("Home_S", "Away_S")], col = dt$Result)
+```
+
+<img src = "https://user-images.githubusercontent.com/39016197/84827365-97f2de00-afe1-11ea-8499-4f4ea7b549a1.png" width = 410 height = 280>
+
+```
+plot(dt1[c("Home_S", "Away_S")], col = km$cluster)
+```
+
+<img src = "https://user-images.githubusercontent.com/39016197/84827428-afca6200-afe1-11ea-86d7-121a382080fb.png" width = 410 height = 280>
+
+As we can see from the plot with the actual results, there is no pattern for the clustering analysis to work. It really does appear completely random - or at least there are many other factors besides shots that influence the outcome of a game. The k-means cluster partioned the data too evenly from left to right - it never really had a chance to cluster the results correctly.
+
+For the sake of analysis, I do need to run a comparison on 3 clusters - since this seemed to have been the opiptmal choice. I still won't hold by breathe for life-changing results, but it'll be a fun comparison.
+
+```
+km1 = kmeans(dt1,3)
+> autoplot(km1, dt1,frame=TRUE)
+> km1$centers
+    Home_G   Home_S   Away_G   Away_S
+1 3.233846 30.40000 2.904615 38.09231
+2 3.259366 38.89625 2.953890 27.02594
+3 2.875610 27.84146 2.726829 27.84146
+km1
+Within cluster sum of squares by cluster:
+[1] 15509.50 16300.95 14399.45
+ (between_SS / total_SS =  52.1 %)
+```
+
+<img src = "https://user-images.githubusercontent.com/39016197/84828019-983fa900-afe2-11ea-884f-5b9c5bf51777.png" width = 410 height = 280>
+
+While I'm still not convinced this will be a whole lot better, the 52.1% is an improvement.
+
+```
+table(dt$Result, km1$cluster)
+   
+      1   2   3
+  L 145 167 193
+  W 180 180 217
+ ```
+  
+```
+plot(dt1[c("Home_S", "Away_S")], col = km1$cluster)
+```
+
+<img src = "https://user-images.githubusercontent.com/39016197/84828389-3895cd80-afe3-11ea-91a0-44567691a09e.png" width = 410 height = 280>
+  
 # Challenges
 
 There were several obstacles that presented itself and so far, most of them have been overcome. The use of functions not only cut down on the # of lines I would need for each game, but it also helped solve some of the issues I ran into early. When teams play multiple goaltenders, the number of columns in the player table is increased and shifts the coding required to grab only the TOTAL row (since I only care about the total team stats for the time being). Using ifelse and nrow(x) solved this problem. Another came with Overtime and Shootouts. Since I'm tracking points for each game, I needed a way to determine if a loser gets 1 or 0 points. By reading the box score text, I set up a function to read "OT" and "Shootout" and while this worked, I later had to modify this since most Ottawa players were represented by OTT in the box score. Shootouts were another issue since I was only pulling goals scored by players - meaning another formula had to be set up to inflate the goal # if a victory was obtained by shootout. 
