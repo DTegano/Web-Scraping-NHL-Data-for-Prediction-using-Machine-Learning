@@ -544,7 +544,31 @@ Within cluster sum of squares by cluster:
 Right away, I can tell that the subgroups won't be very meaningful. While the 34.9% above doesn't sell me either, the plot visual is simply too close together to really partition this data. However, on the bright side, the cluster center (means) does tell a story. In cluster one, the average data point has a home goal value of 3.14 and 36.6 home shots while the away team averages 2.83 goals and 26.96 shots. This compares nicely to 3 goals and 28 shots for the home team in cluster 2 while the away team averages 2.86 goals and 34 shots.
 This tells me that the games in cluster one give the competitive edge to the Home team. Hockey has its' fair share of even games, but also it's fair share of one-sided games. In games where the home team is dominating puck and zone possession, you'll typically see a higher goal and shot count and a lower count for both stats on the away side. In contrast, if the Away team is playing better, you'll see these numbers skew in the opposite direction. This is what we mainly see in cluster 2 for shots, although there isn't a big difference in goals (which makes sense since both goal marks are around the league average).
 
+However, any fan knows that it takes more than just shots to win a game. I can confirm this by comparing the cluster vectors to the actual game results:
 
+```
+table(dt$Result, km$cluster)
+   
+      1   2
+  L 253 252
+  W 267 310
+```
+
+We can see how undecided the cluster analysis is. Despite having an away advantage in cluster 2, there is an even amount of Home team losses in cluster one and two, but the majority of home wins actually placed in cluster 2. It doesn't get any better when the look at the plots for the goals as well: 
+
+```
+plot(dt1[c("Home_G", "Away_G")], col = dt$Result)
+```
+
+<img src = "https://user-images.githubusercontent.com/39016197/84826663-80672580-afe0-11ea-9c09-922b18329460.png" width = 410 height = 300>
+
+```
+plot(dt1[c("Home_G", "Away_G")], col = km$cluster)
+```
+
+<img src = "https://user-images.githubusercontent.com/39016197/84826782-b60c0e80-afe0-11ea-9a83-9d3b42d71c3e.png" width = 410 height = 300>
+
+For the first plot of the results variable, we can see a clear pattern. The more goals that the home team scores, the more likey they are to win. However, the second plot that represents the cluster vectors, looks almost completely random.
 
 # Challenges
 
