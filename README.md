@@ -494,6 +494,7 @@ I will admit that one random game messing up all of my code did make me laugh ou
 
 <img src = "https://user-images.githubusercontent.com/39016197/83693501-6fb3ba00-a5b3-11ea-9684-dc039587557f.png" width = 580 height = 250>
 <i>*The above image retreived from https://www.nhl.com/news/anaheim-ducks-edmonton-oilers-game-recap/c-306275970. </i>
+<p></p>
 
 There were a few other NAs initally too from incomplete data. Since the website simply lacked the data in the fields I pulled, I used the team average instead:
 ```
