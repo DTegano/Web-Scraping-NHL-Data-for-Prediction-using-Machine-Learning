@@ -515,6 +515,34 @@ Now that my function has been set up, I'll create a new data frame with only the
 ```
 
 I'll use my function on my dataset and plot the results:
+```
+wssplot(dt1)
+```
+
+<img src = "https://user-images.githubusercontent.com/39016197/84824480-3d578300-afdd-11ea-9b72-ce95eacbc811.png" width = 440 height = 250>
+
+Based on the image, 2 or 3 clusters seem to be optimal - with 3 being more likely. Since I was hoping I'd be able to subgroup this into 2 clusters, I'll start with that first.
+
+```
+km = kmeans(dt1,2)
+> autoplot(km, dt1,frame=TRUE)
+> km$centers
+    Home_G   Home_S   Away_G   Away_S
+1 3.146154 36.61923 2.836538 26.96346
+2 3.069395 28.02491 2.868327 34.07829
+
+> km
+K-means clustering with 2 clusters of sizes 520, 562
+#omitted clustering vector due to size
+Within cluster sum of squares by cluster:
+[1] 28838.91 33984.76
+ (between_SS / total_SS =  34.9 %)
+```
+
+<img src = "https://user-images.githubusercontent.com/39016197/84825044-10f03680-afde-11ea-9153-4831096d25ed.png" width = 480 height = 320>
+
+Right away, I can tell that the subgroups won't be very meaningful. While the 34.9% above doesn't sell me either, the plot visual is simply too close together to really partition this data. However, on the bright side, the cluster center (means) does tell a story. In cluster one, the average data point has a home goal value of 3.14 and 36.6 home shots while the away team averages 2.83 goals and 26.96 shots. This compares nicely to 3 goals and 28 shots for the home team in cluster 2 while the away team averages 2.86 goals and 34 shots.
+This tells me that the games in cluster one give the competitive edge to the Home team. Hockey has its' fair share of even games, but also it's fair share of one-sided games. In games where the home team is dominating puck and zone possession, you'll typically see a higher goal and shot count and a lower count for both stats on the away side. In contrast, if the Away team is playing better, you'll see these numbers skew in the opposite direction. This is what we mainly see in cluster 2 for shots, although there isn't a big difference in goals (which makes sense since both goal marks are around the league average).
 
 
 
