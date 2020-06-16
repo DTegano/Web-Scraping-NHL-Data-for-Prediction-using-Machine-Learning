@@ -481,6 +481,42 @@ dt$Home_PDO = format(round(dt$Home_PDO, 3), nsmall = 3)
 dt$Away_PDO = format(round(dt$Away_PDO, 3), nsmall = 3)
 ```
 
+# Analysis
+The majority of my analysis will be on part 2 on this project. However, what's the point of doing all of this work without a little bit of fun? Below, I'll grab some of the variables from my test base data set (non-aggregated) and perform k-means clustering analysis. Essentially, I want to see if there are any true subgroups among my data points, or if the variables I use just appear random.
+
+<b> Shots & Goals for Home & Away Teams </b><p></p>
+Here, I want to see if there are any patterns among shots and goals for teams. Hockey is a complex sport, but there is one myth that fans and sports analysts assume in this sport - shots = more goals. While I don't disagree with this by any means, there is clearly more to an outcome of a hockey game than shots. Yes, goals ultimately decide the outcome of the game. However, more shots doesn't mean that a team is more likely to walk away with a win.
+
+First, I'll want to find the opimtal amount of clusters for my data. Using the "within groups of sum of squares" approach, I can plot my data points and use the 'elbow method' to find the opimal amount of clusters. The below code is the function I'll use to set up the data:
+```
+wssplot = function(data, nc=10, seed=99) {
+    wss = (nrow(data)-1)*sum(apply(data,2,var))
+    for (i in 2:nc) {
+        set.seed(seed)
+        wss[i] = sum(kmeans(data, centers=i)$withinss)}
+    plot(1:nc, wss, type = "b", xlab = "Number of Clusters",
+         ylab = "Within groups of sum of squares")
+    }
+```
+
+Now that my function has been set up, I'll create a new data frame with only the shots and goals column for the home and away teams. I'll note that this is a form of unsupervised learning since I removed the results column. I'll preview the first few rows of the data set so that you can get a feel from what I'm looking at:
+
+```
+ head(dt1)
+# A tibble: 6 x 4
+  Home_G Home_S Away_G Away_S
+   <dbl>  <dbl>  <dbl>  <dbl>
+1      3     22      2     33
+2      5     42      3     26
+3      4     35      1     22
+4      2     22      3     34
+5      2     29      1     33
+6      1     29      2     20
+```
+
+I'll use my function on my dataset and plot the results:
+
+
 
 # Challenges
 
