@@ -4,3 +4,34 @@
 <p></p>
 
 # Libraries Used:
+```{r}
+library(rvest) # web scraping
+library(readxl) # importing xls & xlsx files
+library(dplyr) # used for nesting/chaining
+library(tidyr) # data cleaning
+library(stringr) # Used to detect OT and Shootouts
+library(writexl) # exporting to xlsx file
+library(RCurl) # Checking URL
+library(chron) # Date conversion to Time
+library(stats) # Group Functional
+library(plyr) # ddpylr for aggregation
+library(ggplot2) # K-Means Plot
+library(ggfortify) # K-Means Plot
+```
+
+The short description above basically sums up why each package is needed. The Rvest package is vital to making the web scraper work - the code is built for Rvest. The Readxl and writexl packages helped me save and backup my data frame into an excel sheet once my data is pulled. Dplyr was key to shortening my script with its' chaining functions  - as I used this in each once of my team's functions. Tidyr was used in cleaning, separating, and uniting my data together. The stringr package was a wildcard when I started this project, but it became a centerpiece to recognizing which games were decided by regulation, overtime or shootout. RCurl was a key package in my web scraping automation as I only pulled data from certain URLS that existed - my web scraper was built based on the pattern of the website and checked many different URL variations. Chron helped me convert the text date (such as October 3rd, 2018 7:00 PM) into an actual Time type/format for easy sorting. The Plyr package was a necessity to aggregating my data properly, and the stats/ggplot packages allowed me to perform some basic k-means clustering analysis in part 1 of this project. 
+<p></p>
+
+# Functions 
+
+To pull basic stats for each team:
+```{r}
+GET_ANA = function (x) {
+    table = x %>%
+        html_node(xpath = '//*[@id="ANA_skaters"]') %>%
+        html_table()
+    names(table) = lapply(table[1,], as.character)
+    table = table[-1,-1]
+    table = table[multi_roster(table), c(2,6,14)]
+    }
+```
