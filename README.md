@@ -619,7 +619,7 @@ plot(dt1[c("Home_S", "Away_S")], col = km1$cluster)
 
 <img src = "https://user-images.githubusercontent.com/39016197/84828389-3895cd80-afe3-11ea-91a0-44567691a09e.png" width = 410 height = 280>
 
-Based on the above results, 3 clusters doesn't fair any better. The model still has a tough time deciding on which games are wins and which games on losses. With that said, I'll continue my analysis while only viewing the 2 clusters.
+Based on the above results, 3 clusters doesn't fair any better. The K-Means analysis still has a tough time deciding on which games are wins and which games on losses. With that said, I'll continue my analysis while only viewing the 2 clusters.
 
 <b> Shots & Goals for Home & Away Teams - Standardized Data </b><p></p>
 
@@ -641,7 +641,54 @@ wssplot(dt1)
 ```
 <img src = "https://user-images.githubusercontent.com/39016197/84956125-c5a95700-b0b5-11ea-8fd8-775670526ead.png" width = 410 height = 270>
 
-  
+Again, I'll run K-Means and view my model results:
+```
+km = kmeans(dt1,2)
+> autoplot(km, dt1,frame=TRUE)
+> km$centers
+      Home_G     Home_S     Away_G     Away_S
+1 -0.6469022  0.1242144  0.6478707 -0.1201991
+2  0.5703990 -0.1095247 -0.5712529  0.1059842
+km
+Within cluster sum of squares by cluster:
+[1] 1604.413 1891.388
+ (between_SS / total_SS =  19.2 %)
+```
+<img src = "https://user-images.githubusercontent.com/39016197/84956493-8e877580-b0b6-11ea-9260-a684664577c0.png" width = 410 height = 270>
+
+Now, 19.2% doesn't exactly scream "fixed!" to me. The plot also had overlapping data, which makes sense to me since I don't think there is a perfect way to differeniate wins and losses based on goals and shots alone. But surprisingly enough, the K-means analysis did a much better job of sorting the Wins and Losses out:
+```
+table(dt$Result, km$cluster)
+   
+      1   2
+  L 483  22
+  W  24 553
+```
+
+```
+plot(dt1[c("Home_G", "Away_G")], col = km$cluster)
+```
+<img src = "https://user-images.githubusercontent.com/39016197/84956914-5d5b7500-b0b7-11ea-919a-b4ebb28f480f.png" width = 410 height = 260>
+
+```
+plot(dt1[c("Home_G", "Away_G")], col = dt$Result)
+```
+<img src = "https://user-images.githubusercontent.com/39016197/84957097-bdeab200-b0b7-11ea-9893-6e24df7e6c1e.png" width = 410 height = 260>
+            
+```
+plot(dt1[c("Home_S", "Away_S")], col = km$cluster)
+```
+
+<img src = "https://user-images.githubusercontent.com/39016197/84957163-dbb81700-b0b7-11ea-81f9-8d1f8c8520ef.png" width = 410 height = 260>
+
+```
+plot(dt1[c("Home_S", "Away_S")], col = dt$Result)
+```
+<img src = "https://user-images.githubusercontent.com/39016197/84957197-f2f70480-b0b7-11ea-999c-82b0885127df.png" width = 410 height = 260>
+
+As we can see, K-Means analysis did a much better job in identifying 2 subgroups among the data. Well enough, in fact, where only 46 of the games were placed incorrectly.
+
+
 # Challenges
 
 There were several obstacles that presented itself during part 1 of this project. The use of functions not only cut down on the # of lines I would need for each game, but it also helped solve some of the issues I ran into early. When teams play multiple goaltenders, the number of columns in the player table is increased and shifts the coding required to grab only the TOTAL row (since I only care about the total team stats for the time being). Using ifelse and nrow(x) helped solved this problem initially, but I did not take into account that the Player Roster could also be less than the League requirement. I will admit that there were a few random games messing up all of my code that did fit this criteria that made me chuckle. While I was fully confident that teams could not play with an incomplete roster, turns out some actually did. When pulling data, I realized that one of my data sets had some NA values. Upon digging, one of the games with this problem was when the Anaheim Ducks played with only 5 Defensemen due to a lineup sheet mistake. Silly Anaheim, and silly me for not producing a better code initially to avoid this mistake:
