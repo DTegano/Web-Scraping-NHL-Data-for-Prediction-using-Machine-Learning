@@ -1,6 +1,6 @@
 # Web Scraping NHL Data for Prediction using MachineLearning
 
-<b> Project Background</b>: Using data from the 2017-2018 & 2018-2019 NHL Seasons, I will train a Machine Learning model to predict the games (at least the ones completed before quarantine) for the 2019-2020 season. This Project will be completed in two different parts - Web Scraping (data collection & cleaning) and Predicting using Machine Learning. My model will learn based on the aggregated stats of a given team, at any time in a season, before the scheduled outcome occurs. Using the Rvest package, I will create a web scraper to gather all the data I can from each NHL game for each season. At the time of writing, I'm exclusively using hockey-reference.com for this data. Once my data is pulled, the stats from each game include: Date of the game, Home Team, Away Team, Result (training only - reflects Home Team), Home Goals, Home Shots, Away Goals, Home PIM, Away PIM, Away Shots, Home Corsi (all situations), Away Corsi, Home Offensive Zone Start %, Away Offensive Zone Start %, Home Hits, Away Hits, Home Blocked Shots, Away Blocked Shots, Game Length (Regulation, Overtime, or Shootout), Empty_Netters, Home Save %, Away Save %, Home Shooting %, Away Shooting %, Home SPSV%/PDO, Away SPSV%/PDO, Home Goals Against, Away Goals Against, Home Differential, Away Differential, Home Wins, Away Wins, Home Shots Against, Away Shots Against, Home Points and Away Points. Prediction results will depend on whether it was the home or away team that won the game. 
+<b> Project Background</b>: Using data from the 2017-2018 & 2018-2019 NHL Seasons, I will train a Machine Learning model to predict the games (at least the ones completed before quarantine) for the 2019-2020 season. This Project will be completed in two different parts - Web Scraping (data collection & cleaning) and Predicting using Machine Learning. My model will learn based on the aggregated stats of a given team, at any time in a season, before the scheduled outcome occurs. Using the Rvest package, I will create a web scraper to gather all the data I can from each NHL game for each season. At the time of writing, I'm exclusively using hockey-reference.com for this data. Once my data is pulled, the stats from each game include: Date of the game, Home Team, Away Team, Result (training only - reflects Home Team), Home Goals, Home Shots, Home PIM, Away Goals, Away PIM, Away Shots, Home Corsi (all situations), Away Corsi, Home Offensive Zone Start %, Away Offensive Zone Start %, Home Hits, Away Hits, Home Blocked Shots, Away Blocked Shots, Game Length (Regulation, Overtime, or Shootout), Empty_Netters (reflects empty net goals for the winning team), Home Save %, Away Save %, Home Shooting %, Away Shooting %, Home SPSV%/PDO, Away SPSV%/PDO, Home Goals Against, Away Goals Against, Home Differential, Away Differential, Home Wins, Away Wins, Home Shots Against, Away Shots Against, Home Points and Away Points. Prediction results will depend on whether it was the home or away team that won the game. 
 <p></p>
 
 # Libraries Used:
@@ -19,7 +19,7 @@ library(ggplot2) # K-Means Plot
 library(ggfortify) # K-Means Plot
 ```
 
-The Rvest package is vital to making the web scraper work - the code is built for Rvest. The Readxl and writexl packages helped me save and backup my data frame into an excel sheet once my data is pulled. Dplyr was key to shortening my script with its' chaining functions  - as I used this in each once of my team's functions. Tidyr was used in cleaning, separating, and uniting my data together. The stringr package was a wildcard when I started this project, but it became a centerpiece to recognizing which games were decided by regulation, overtime or shootout. RCurl was a key package in my web scraping automation as I only pulled data from certain URLS that existed - my web scraper was built based on the pattern of the website and checked many different URL variations. Chron helped me convert the text date (such as October 3rd, 2018 7:00 PM) into an actual Time type/format for easy sorting. The Plyr package was a necessity to aggregating my data properly, and the stats/ggplot packages allowed me to perform some basic k-means clustering analysis in part 1 of this project. 
+The Rvest package is vital to making the web scraper work - the code is built for Rvest. The Readxl and writexl packages helped me save and backup my data frame into an excel sheet once my data is pulled. Dplyr was key to shortening my script with its' chaining functions  - as I used this in each one of my team's functions. Tidyr was used in cleaning, separating, and uniting my data together. The stringr package was a wildcard when I started this project, but it became a centerpiece to recognizing which games were decided by regulation, overtime or shootout (which ultimately decided points per game). RCurl is a necessary package in my web scraping automation as I only pulled data from URLS that existed - my web scraper was built based on the pattern of the website and checked many different URL variations. Chron helped me convert the text date (such as October 3rd, 2018 7:00 PM) into an actual Time type/format for easy sorting. The Plyr package was a necessity to aggregating my data properly, and the stats/ggplot packages allowed me to perform some basic k-means clustering analysis in part 1 of this project. 
 <p></p>
 
 # Functions 
@@ -36,7 +36,7 @@ GET_ANA = function (x) {
     }
 ```
 
-I'll note that the above code was tweaked several times throughout this project's lifecycle. Originally, the code for each of the 31 teams was much larger - this was eventually narrowed down by web scraping using the xpath as opposed to a constant node path. Toward the end of my project, I figured it was better to include some data cleaning steps into each team's function - as I only wanted to grab certain data (as opposed to all of the data by every single player per team) for this project. The above code had to be reproduced 30 additional times to capture the ID for each team. The multi-roster code used will be explained below.
+I'll note that the above code was tweaked several times throughout this project's lifecycle. Originally, the code for each of the 31 teams was much larger - this was eventually narrowed down by web scraping using the xpath as opposed to a constant node path. Toward the end of my project, I figured it was better to include some data cleaning steps into each team's function - as I only wanted to grab certain data (as opposed to all of the data by every single player per team) for this project. The above code had to be reproduced 30 additional times to capture the ID for each team. The multi-roster code used will be explained below, and columns 2, 6, and 14 represent goals, penalty minutes, and shots.
 <p></p>
 
 To pull advanced stats for each team:
@@ -53,7 +53,7 @@ ANA_ADV = function(x) {
 }
 ```
 
-This code was a bit tricky to figure out compared to the basic player stats table for each team. All of the advanced stats tables were embedded in html comments as opposed to table tags - meaning I figure had to read the comment texts and collapse. Again, this code was reproduced 30 more times to capture this new table's ID for every team. The inc_roster code/function will also be explained below.
+This code was a bit tricky to figure out compared to the basic player stats table for each team. All of the advanced stats tables were embedded in html comments as opposed to table tags - meaning I figure had to read the comment texts and collapse. Again, this code was reproduced 30 more times to capture this new table's ID for every team. The inc_roster code/function will also be explained below, and columns 5, 9, 10, and 11 represent Corsi %, Offensive Zone %, Hits and Blocked Shots. 
 <p></p>
 
 Pulling in the date at each url:
@@ -66,7 +66,7 @@ date_f = function(x) {
 }
 ```
 
-The date, believe it or not, is a key factor to this machine learning project. All of the games need to be in order from oldest to newest so that the team stats can aggregate as the season progresses. Eventually, I want to be able to predict games day by day - which means I'll need all of the updated stats that reflect every game played by that team in that season.
+The date, believe it or not, is a key factor to this machine learning project. All of the games need to be in order from oldest to newest so that the team stats can aggregate as the season progresses. Eventually, I want to be able to predict games on a day to day basis - which means I'll need all of the updated stats that reflect every game played by that team in that season.
 <p></p>
 
 Pulling in the name of each team and goals per game:
@@ -98,7 +98,7 @@ home_score_f = function(x) {
 }
 ```
 
-Luckily, the pattern of www.hockey-reference.com is quite consistent and made these functions easy to set up. The xpath is generally the same for each of the home and away team for each URL - with the difference being one small change in the 'div' container where the information is stored. Both of the above functions serve it's purpose - the names of each team are binded and stored in each data frame per game within the clean function set up below. The team scores determine whether the result we are predicting (for the home team) is a "W" for win or "L" for loss regardless if the game went into Overtime or Shootout. 1 Point is still awarded to the losing team if Overtime or a Shootout was needed.
+Luckily, the pattern of www.hockey-reference.com is quite consistent and made these functions easy to set up. The xpath is generally the same for each of the home and away team for each URL - with the difference being one small change in the 'div' container where the information is stored. Both of the above functions serve its' purpose - the names of each team are binded and stored in each data frame per game within the clean function set up below. The team scores determine whether the result we are predicting (for the home team) is a "W" for win or "L" for loss regardless if the game went into Overtime or Shootout. 1 Point is still awarded to the losing team if Overtime or a Shootout was needed.
 <p></p>
 
 Cleaning each basic and advanced table, for each team, and combining into one data frame:
@@ -115,7 +115,7 @@ game_clean = function(w,x,y,z) {
   d = cbind(d,emp)
 }
 ```
-I got to learn the hardway not to have a 'date' data frame when using automatic web scraper that includes 'for date in date_month {' as part of your code. Thankfully, I was able to make the small change from "date" to "dat" to get all of the wheels greased and working again. This cleans and binds all the data for one game together. This way, it is much easier to rbind all of my rows for each game once the last part of the web scraper code has been run.
+I got to learn the hardway not to have a 'date' data frame when using an automatic web scraper that includes 'for date in date_month {' as part of your code. Thankfully, I was able to make the small change from "date" to "dat" to get all of the wheels greased and working again. This cleans and binds all the data for one game together. This way, it is much easier to rbind all of my rows for each game once the last part of the web scraper code has been run.
 <p></p>
 
 This checks to see if any game goes into Overtime or Shootout:
@@ -143,20 +143,20 @@ emp_net = function(x) {
 }
 ```
 
-This is a key part when calculating save % for teams. Empty net goals do not count towards a goaltender's save %, so to best line up my data with a team's overall save %, I needed to exclude empty net goals from the calcluation. I also thought there can be a correlation to a team's winning success - as a team with more empty net goals may prove to secure their victories easier than others.
+This is a key part when calculating save % for teams. Empty net goals do not count towards a goaltender's save %, so in order to best line up my data with a team's overall save %, I needed to exclude empty net goals from the calcluation. I also think this can be a correlation to a team's winning success - as a team with more empty net goals may prove to secure their victories easier than others.
 <p></p>
 
 For games with multiple-goalies played and/or incorrect rosters:
 ```{r}
 multi_roster = function(x) {
-  ifelse(nrow(x)>20,nrow(x),20)
-}
+    ifelse(nrow(x)!=20,nrow(x),20)
+    }
 
 inc_roster = function(x) {
     ifelse(nrow(x)!=190,nrow(x)-8,182)
 }
 ```
-The explanation you may, or may not, have been looking for in the above codes. As I was combing through the different URLS, I noticed that not all of the basic stat tables had the same # of rows. While it is mandatory for teams to dress 18 skaters before each game, multiple goalies that play increase the # of rows per table. The above code, mult-roster, was an easy fix and will certainly come in handy for those rare games when an emergency goalie has to come in and play.
+The explanation you may, or may not, have been looking for in the above codes. As I was combing through the different URLS, I noticed that not all of the basic stat tables had the same # of rows. While it is mandatory for teams to dress 18 skaters before each game (but not always the case - check out the challenges section below!), multiple goalies that play increase the # of rows per table. The above code, mult-roster, was an easy fix and will certainly come in handy for those rare games when an emergency goalie has to come in and play, or other odd situations.
 
 The same holds true for inc_roster. While teams cannot have holes in their lineups for games, I did find a few games where incorrect lineup submissions caused a team to start the game shorthanded. To fix this issue, inc_roster will still pull the same data regardless of how many players are dressed.
 <p></p>
@@ -226,21 +226,21 @@ dt = rbind(dt,t)
 
 <i>*editors note - 'CHI_table = CHI_table[multi_roster(CHI_table), <b>c(2,6,14)]</b>' is no longer needed since this was updated in each team's function (applies to VAN as well).</i>
 
-As we can see, that's quite A LOT of code to be run for every single game. Especially, when there are 1,271 games played (82 games times 31 teams divided by 2 since each game involves two teams) per season. Initially, I ran through the vigorous process of running the above code for EACH game. Believe it or not, it only took 15-20 seconds per game - I pasted my code into sublime and used the 'find and replace all' functional to swap out each team's ID and the date. Still, this took me anywhere from 1-2 hours just to pull a month's worth of data. For a Data Scientist? Come on, I can do better.
+As we can see, that's quite A LOT of code to be run for every single game. Especially, when there are 1,271 games played (82 games times 31 teams divided by 2 since each game involves two teams) per season. Initially, I ran through the vigorous process of running the above code for EACH game. Believe it or not, it only took 15-20 seconds per game - I pasted my code into sublime and used the 'find and replace all' functional to swap out each team's ID and the date. Still, this took me anywhere from 1-2 hours just to pull a month's worth of data. Which wasn't too bad but for a Data Scientist? Come on, I can do better.
 
 # Automating the Web Scraper
 
-Huge sigh of relief here. With the final web scraper code, I can scrape, clean, and organize all the data that I want in 1/5 of the time. To get started on this. I'll need to add some additional variables and functions to help put all of the pieces together:
+Huge sigh of relief here. With the final web scraper code, I can scrape, clean, and organize all the data that I want in 1/5 of the time that it took me to rigorously change and run code for every game. To get started on this, I'll need to add some additional variables and functions to help put all of the pieces together:
 
 ```{r}
-date_year = c(2019)
+date_year = c(2018)
 date_month = sprintf("%02d", c(10:12))
 date_day = sprintf("%02d", c(1:31))
 
 team_abrev = c('ANA','ARI','BOS','BUF','CAR','CBJ','CGY','CHI','COL','DAL','DET','EDM','FLA','LAK','MIN','MTL','NJD','NSH','NYI','NYR','OTT','PHI','PIT','SJS','STL','TBL','TOR','VAN','VEG','WPG','WSH')
 ```
 
-The above code only represents the first half of the season (or close enough to it) for the 2018-2019 campaign. I chose to split of seasons in half for quality control - less data to manage gives me a better chance to find mistakes within in the data. Running less data in my webscraper also saves me more time when I have to debug and re-run the code. As we see, the year will represent "2018" and the months will be represented as "10" "11" and "12." The days will cycle from 1 to 31 - with the digits being 2 for each day. For example, the 1st of the month will be "01" - and this is key when running through all of the URLs. Since the home team is represented in the URL, I need to run through every single team until on every single day (and month, year, etc.) until the URL exists. More on this will be explained below.
+The above code only represents the first half of the season (or close enough to it) for the 2018-2019 campaign. I chose to split the seasons in half for quality control - less data to manage gives me a better chance to find mistakes within the data. Running less data in my webscraper also saves me more time when I have to debug and re-run the code. As we see, the year will represent "2018" and the months will be represented as "10" "11" and "12." The days will cycle from 1 to 31 - with the digits being 2 for each day. For example, the 1st of the month will be "01" - and this is key when running through all of the URLs. Since the home team is represented in the URL, I need to run through every single team on every single day (and month, year, etc.) until the URL exists. I need every team abbreviation stored so that the URLs will get properly read. More on this will be explained below.
 
 I also will need to add 2 additional functions so that not only does the home and away team names get read, but so does their IDs:
 ```{r}
@@ -292,7 +292,7 @@ for (year in date_year) {
   }
   ```
   
-The Web Scraper is going to check every year (at least only the ones that I have specified), every month, every day, and every team until a URL gets a match. This is key since every URL on hockey-reference follows the same format for every game - only the home team ID and date changes in each URL. Once the URL exists, all of the information I need is collected and cleaned by the previous functions I set up, then to a data frame. 
+The Web Scraper is going to check every year (at least only the ones that I have specified), every month, every day, and every team until a URL gets a match. This is key since every URL on hockey-reference follows the same format for every game - only the home team ID and date changes in each URL. Once the URL exists, all of the information I need is collected and cleaned by the previous functions that I set up, then added to a data frame. 
 <p></p>
 
 Once this has been completed, I'll need to combine all of this data into one data frame.The step below should do the trick:
@@ -315,7 +315,7 @@ My dfs variable, also referring to distributed file system, checks my R envirome
 
 # Create and Apply Variables to the rest of the data
 
-Now that I have my base data from the IRLS, I need to create the rest of my variables based on what I have pulled:
+Now that I have my base data from the URLS, I need to create the rest of my variables based on what I have pulled:
 ```
 dt$Home_G = as.numeric(dt$Home_G)
 dt$Home_S = as.numeric(dt$Home_S)
@@ -324,10 +324,10 @@ dt$Away_S = as.numeric(dt$Away_S)
 dt$Home_BS = as.numeric(dt$Home_BS)
 dt$Away_BS = as.numeric(dt$Away_BS)
 
-dt$Home_SV = (dt$Away_S - dt$Away_G)/dt$Away_S
-dt$Away_SV = (dt$Home_S - dt$Home_G)/dt$Home_S
-dt$Home_SH = ifelse(dt$Game_Length == "S" & dt$Result == "W",  (dt$Home_G - 1)/ dt$Home_S,dt$Home_G/dt$Home_S)
-dt$Away_SH = ifelse(dt$Game_Length == "S" & dt$Result == "L",  (dt$Away_G - 1)/ dt$Away_S, dt$Away_G/dt$Away_S)
+dt$Home_SV = ifelse(dt$Empty_Netters!=0 & dt$Result=="L",((dt$Away_S - dt$Empty_Netters) - (dt$Away_G - dt$Empty_Netters))/(dt$Away_S - dt$Empty_Netters), (dt$Away_S - dt$Away_G)/dt$Away_S)
+dt$Away_SV = ifelse(dt$Empty_Netters!=0 & dt$Result=="W",((dt$Home_S - dt$Empty_Netters) - (dt$Home_G - dt$Empty_Netters))/(dt$Home_S - dt$Empty_Netters), (dt$Home_S - dt$Home_G)/dt$Home_S)
+dt$Home_SH = dt$Home_G/dt$Home_S
+dt$Away_SH = dt$Away_G/dt$Away_S
 dt$Home_PDO = dt$Home_SV + dt$Home_SH
 dt$Away_PDO = dt$Away_SV + dt$Away_SH
 
@@ -343,11 +343,11 @@ dt$Away_SA = dt$Home_S
 dt$Home_P = ifelse(dt$Result == "W", 2, ifelse(dt$Result == "L" &  dt$Game_Length == "R", 0,1))
 dt$Away_P = ifelse(dt$Result == "L", 2, ifelse(dt$Result == "W" & dt$Game_Length == "R", 0,1))
 ```
-First, I'll need to make sure that certain variables in my existing data set is the proper structure. Once I convert these variables to the numeric class, I will create a save% variable for each team. As stated previously, empty net goals don't count towards a team's save % so I wil need to make sure that any empty net goals are reduced from the goal count, as well as the shot count. I'll note that these variables are assuming that the winning team scored the empty net goals (since that is usually the case 99% of the time). Shooting % and PDO are then calcuated based on goals, shots, and save %.
+First, I'll need to make sure that certain variables in my existing data set is the proper structure. Once I convert these variables to the numeric class, I will create a save% variable for each team. As stated previously, empty net goals don't count towards a team's save % so I wil need to make sure that any empty net goals are reduced from the goal count, as well as the shot count. I'll note that these variables are assuming that the winning team scored the empty net goals (since that is usually the case 99% of the time). Shooting % and PDO are then calcuated based on goals, shots, and save %. 
 
 I also need to track the goals against for each team. This is different than the opposing team's goal count since it will be an aggregated stat of goals against from other teams played - not the one the team played against that game. It's important to recall that predictions will be based on aggregated stats for each team prior to that game being played. With that said, I'll also track a team's differential, Wins set up as a binary variable (I will not differentiate overtime and shootout losses), shots against, and points (this will include 1 point for overtime and shootout losses).
 
-Finally, I'll convert the date (or dat) variable to a time structure using the chron package. This allows me to order my data correctly from the earliest games, to the latest games. This will be key when I start aggregagting the data.
+Finally, I'll convert the date variable to a time structure using the chron package. This allows me to order my data correctly from the earliest games, to the latest games. This will be key when I start aggregagting the data.
 
 ```
 dt = separate(dt, col = 'Date', into = c('Day', 'Year', "Time"), sep = ",")
@@ -393,7 +393,7 @@ Tnames = c("Anaheim Ducks", "Arizona Coyotes", "Boston Bruins", "Buffalo Sabres"
 "Nashville Predators", "New Jersey Devils", "New York Islanders", "New York Rangers", "Ottawa Senators", "Philadelphia Flyers", "Pittsburgh Penguins", "San Jose Sharks", "St. Louis Blues", "Tampa Bay Lightning", "Toronto Maple Leafs", "Vancouver Canucks", "Vegas Golden Knights", "Washington Capitals", "Winnipeg Jets")
 ```
 
-Now I'll create a loop using lapply. Since lapply only creates lists, I'll need to grab each list created, for each team, and bind them together.
+Now I'll create a loop using lapply. Since lapply only creates lists, I'll need to grab each list created, for each team, and bind them together. I can do this by looping through all 31 lists (31 teams) created from the below code:
 
 ```
 z = lapply(Tnames, CS_Goal)
@@ -419,11 +419,12 @@ dt = ddply(dt, .(Date, Home, Away, Result, Home_G, Home_PIM, Home_S, Away_G, Awa
 
 write_xlsx(dt, "C:/Users/David/Documents/MSDS 692/data\\2017-2018 Training Aggregated.xlsx")
 ```
+
 What I like about this code is that it gives me freedom to get rid of columns as I don't need them. Once I had all of the stats aggregated, I removed the stats for each game since predicted games won't have access to those stats until the game is already completed. I then saved the data frame to capture the new column, and moved on to the next stat, Once this was repeated for every stat, I am ready to finalize my data.
 
 # Finalizing the Data
 
-Now that all of my data has been aggregated, I need to re-adjust the save %, shooting %, and PDO variables.
+Now that all of my data has been aggregated, I need to re-adjust the save %, shooting %, and PDO variables since my final data set will need to have these variables based on the cumulative stats.
 ```
 dt$HCS_SV = ((dt$HCS_SA- dt$HCS_Empty_Netters_A) - (dt$HCS_GA - dt$HCS_Empty_Netters_A))/(dt$HCS_SA- dt$HCS_Empty_Netters_A)
 dt$ACS_SV = ((dt$ACS_SA- dt$ACS_Empty_Netters_A) - (dt$ACS_GA - dt$ACS_Empty_Netters_A))/(dt$ACS_SA- dt$ACS_Empty_Netters_A)
@@ -435,7 +436,7 @@ dt$HCS_PDO = dt$HCS_SV + dt$HCS_SH
 dt$ACS_PDO = dt$ACS_SV + dt$ACS_SH
 ```
 
-Since I essentially renamed all of my original variables to "HCS/ACS_", I named all of these columns back to the following:
+Since I named all of the new aggreagted variables starting with "HCS/ACS_", I named all of these columns back to the original variable names:
 
 ```
 col_names = c("Date", "Home", "Away", "Result", "Home_Goals", "Away_Goals", "Home_PIM", "Away_PIM", "Home_Shots", "Away_Shots", "Home_Corsi", "Away_Corsi", "Home_OFS", "Away_OFS", "Home_HT", "Away_HT", "Home_BS", "Away_BS", "Home_EN", "Away_EN", "Home_GA", "Away_GA", "Home_PIM_A", "Away_PIM_A", "Home_SA", "Away_SA", "Home_Corsi_A", "Away_Corsi_A", "Home_OFS_A", "Away_OFS_A", "Home_HT_A", "Away_HT_A", "Home_BS_A", "Away_BS_A", "Home_EN_A", "Away_EN_A", "Home_GP", "Away_GP", "Home_W", "Away_W", "Home_P", "Away_P", "Home_DIF", "Away_DIF", "Home_SV", "Away_SV", "Home_SH", "Away_SH", "Home_PDO", "Away_PDO")
@@ -620,13 +621,7 @@ plot(dt1[c("Home_S", "Away_S")], col = km1$cluster)
   
 # Challenges
 
-There were several obstacles that presented itself and so far, most of them have been overcome. The use of functions not only cut down on the # of lines I would need for each game, but it also helped solve some of the issues I ran into early. When teams play multiple goaltenders, the number of columns in the player table is increased and shifts the coding required to grab only the TOTAL row (since I only care about the total team stats for the time being). Using ifelse and nrow(x) solved this problem. Another came with Overtime and Shootouts. Since I'm tracking points for each game, I needed a way to determine if a loser gets 1 or 0 points. By reading the box score text, I set up a function to read "OT" and "Shootout" and while this worked, I later had to modify this since most Ottawa players were represented by OTT in the box score. Shootouts were another issue since I was only pulling goals scored by players - meaning another formula had to be set up to inflate the goal # if a victory was obtained by shootout. 
-
-Using RVest itself was not challenging but presented a learning curve. Grabbing some of the tables didn't take long to figure out, but the tables wrapped in comments were certainly more challenging to figure out. Automating this web scraper was also a challenge, but with some guidance from my professor Kellen Sorauf, I was able to get this working with how I needed it to.
-
-Now that my web scraper is complete, my next goal is to aggregate all of the stats by time. With a few weeks left in my project deadline, I'll also try to add more data I think will be useful for the eventual Machine Learning analysis - which will be part 2 of this project.
-
-I will admit that one random game messing up all of my code did make me laugh out loud. While I was fully confident that teams could not play with an incomplete roster, turns out one actually did. When pulling data, I realized that one of my data sets had some NA values. Upon digging, it turns out that the Anaheim Ducks played with only 5 Defensemen due to a lineup sheet mistake. Silly Anaheim, and silly me for not producing a better code initially to avoid this mistake:
+There were several obstacles that presented itself during part 1 of this project. The use of functions not only cut down on the # of lines I would need for each game, but it also helped solve some of the issues I ran into early. When teams play multiple goaltenders, the number of columns in the player table is increased and shifts the coding required to grab only the TOTAL row (since I only care about the total team stats for the time being). Using ifelse and nrow(x) helped solved this problem initially, but I did not take into account that the Player Roster could also be less than the League requirement. I will admit that there were a few random games messing up all of my code that did fit this criteria that made me chuckle. While I was fully confident that teams could not play with an incomplete roster, turns out some actually did. When pulling data, I realized that one of my data sets had some NA values. Upon digging, one of the games with this problem was when the Anaheim Ducks played with only 5 Defensemen due to a lineup sheet mistake. Silly Anaheim, and silly me for not producing a better code initially to avoid this mistake:
 
 <img src = "https://user-images.githubusercontent.com/39016197/83693501-6fb3ba00-a5b3-11ea-9684-dc039587557f.png" width = 580 height = 250>
 <i>*The above image retreived from https://www.nhl.com/news/anaheim-ducks-edmonton-oilers-game-recap/c-306275970. </i>
@@ -640,3 +635,9 @@ dt[!complete.cases(dt),]
 
 dt[is.na(dt)] = c(mean(dt$Home_OFS[dt$Home=="San Jose Sharks"], na.rm = TRUE), mean(dt$Home_OFS[dt$Home=="Florida Panthers"], na.rm = TRUE), mean(dt$Away_OFS[dt$Away=="Ottawa Senators"], na.rm = TRUE),mean(dt$Away_OFS[dt$Away=="Montreal Canadiens"], na.rm = TRUE))
 ```
+
+Another issue came from dealing with Overtime and Shootouts. Since I'm tracking points for each game, I needed a way to determine if a loser gets 1 or 0 points. By reading the box score text, I set up a function (as shown in the function section) to read "OT" and "Shootout" and while this worked, I later had to modify this since most Ottawa players were represented by OTT in the box score.
+
+Using RVest itself was not challenging but presented a learning curve. Grabbing some of the tables didn't take long to figure out, but the tables wrapped in comments were certainly more challenging to figure out. Automating this web scraper was also a challenge, but with some guidance from my professor Kellen Sorauf, I was able to get this working with how I needed it to.
+
+Now that I have all of my data and ready to go, be sure to look at my Part 2 repository for Predicting games using Machine Learning!
