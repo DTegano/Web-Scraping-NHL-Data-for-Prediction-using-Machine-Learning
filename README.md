@@ -485,8 +485,8 @@ dt$Away_PDO = format(round(dt$Away_PDO, 3), nsmall = 3)
 # Analysis
 The majority of my analysis will be on part 2 on this project. However, what's the point of doing all of this work without a little bit of fun? Below, I'll grab some of the variables from my test base data set (non-aggregated) and perform k-means clustering analysis. Essentially, I want to see if there are any true subgroups among my data points, or if the variables I use just appear random.
 
-<b> Shots & Goals for Home & Away Teams </b><p></p>
-Here, I want to see if there are any patterns among shots and goals for teams. Hockey is a complex sport, but there is one myth that fans and sports analysts assume in this sport - shots = more goals. While I don't disagree with this by any means, there is clearly more to an outcome of a hockey game than shots. Yes, goals ultimately decide the outcome of the game. However, more shots doesn't mean that a team is more likely to walk away with a win.
+<b> Shots & Goals for Home & Away Teams - Raw Data </b><p></p>
+For my analysis, I want to see if there are any patterns among shots and goals for home and away teams. Hockey is a complex sport, but there is one myth that fans and sports analysts assume in this sport - shots = more goals. While I agree with this, I do believe there is more to an outcome of a hockey game than just shots. Yes, goals ultimately decide the outcome of the game. However, more shots doesn't mean that a team is more likely to walk away with a win. I've seen plenty of games where a standout goalie performance steals the win, but it certainly can't hurt to have more shots just in case. <i> I'll add a note here that my first shot at this analysis is using my data the way it is. </i> I'll explain below after the first attempt.
 
 First, I'll want to find the opimtal amount of clusters for my data. Using the "within groups of sum of squares" approach, I can plot my data points and use the 'elbow method' to find the opimal amount of clusters. The below code is the function I'll use to set up the data:
 ```
@@ -522,7 +522,7 @@ wssplot(dt1)
 
 <img src = "https://user-images.githubusercontent.com/39016197/84824480-3d578300-afdd-11ea-9b72-ce95eacbc811.png" width = 440 height = 250>
 
-Based on the image, 2 or 3 clusters seem to be optimal - with 3 being more likely. Since I was hoping I'd be able to subgroup this into 2 clusters, I'll start with that first.
+Based on the image, it's hard to tell whether 2 or 3 clusters is optimal here. The graph does seem to lean a little more in favor of the 3 clusters. However, I'll focus mainly on the use 2 clusters since I only have 2 possible Results. I'll run 3 clusters afterwards for a comparison.
 
 ```
 km = kmeans(dt1,2)
@@ -612,12 +612,35 @@ table(dt$Result, km1$cluster)
   L 145 167 193
   W 180 180 217
  ```
-  
+ 
 ```
 plot(dt1[c("Home_S", "Away_S")], col = km1$cluster)
 ```
 
 <img src = "https://user-images.githubusercontent.com/39016197/84828389-3895cd80-afe3-11ea-91a0-44567691a09e.png" width = 410 height = 280>
+
+Based on the above results, 3 clusters doesn't fair any better. The model still has a tough time deciding on which games are wins and which games on losses. With that said, I'll continue my analysis while only viewing the 2 clusters.
+
+<b> Shots & Goals for Home & Away Teams - Standardized Data </b><p></p>
+
+There were a few options that I had to work with here for data manipulation. I could normalize the data - which I actually did intially, and ran better results than the outcomes above. However, in the case of K-Means, standardizing the data works much better and yieled promising results.
+
+The below code is an easy way to standardize data using my data's z-score:
+```
+dt1$Home_G = scale(dt$Home_G, center = TRUE, scale = TRUE)
+dt1$Home_S = scale(dt$Home_S, center = TRUE, scale = TRUE)
+dt1$Away_G = scale(dt$Away_G, center = TRUE, scale = TRUE)
+dt1$Away_S = scale(dt$Away_S, center = TRUE, scale = TRUE)
+```
+
+I'll quickly point out that I could have easily just scaled the entire data frame, as opposed to each variable. But sometimes, you don't necessarily want to scale the whole data frame, so why not just show you the gritty way? 
+
+Next, I'll use the same wssplot as above to get a feel for the optimized cluster amount:
+```
+wssplot(dt1)
+```
+<img src = "https://user-images.githubusercontent.com/39016197/84956125-c5a95700-b0b5-11ea-8fd8-775670526ead.png" width = 410 height = 270>
+
   
 # Challenges
 
