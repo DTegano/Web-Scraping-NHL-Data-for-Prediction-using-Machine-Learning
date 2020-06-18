@@ -710,4 +710,9 @@ Another issue came from dealing with Overtime and Shootouts. Since I'm tracking 
 
 Using RVest itself was not challenging but presented a learning curve. Grabbing some of the tables didn't take long to figure out, but the tables wrapped in comments were certainly more challenging to figure out. Automating this web scraper was also a challenge, but with some guidance from my professor Kellen Sorauf, I was able to get this working with how I needed it to.
 
+# Project Summary
+
+To summarize the above, scraping all of your data needed for a project from scratch is a lot of work! Not only do you have to constantly check the quality of the data, but you have to consistenly debug until your script is perfect. Especially when you incorporate data structuring and cleaning into your web scraping code. And after all of that, you're not even done if you want the right data for day by day predictions. Keeping up with the data and aggregating stats as needed will be much easier once you already have the previously chunk of data. For NHL Prediction games specifically, I feel that I have collected and modified enough stats to make a good run at successfully (or should I state "reasonably") predicting NHL games for the 2019-2020 season with only team stats prior to that game.
+
+
 Now that I have all of my data and ready to go, be sure to look at my Part 2 repository for Predicting games using Machine Learning!
