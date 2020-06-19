@@ -542,7 +542,7 @@ Within cluster sum of squares by cluster:
 
 <img src = "https://user-images.githubusercontent.com/39016197/84825044-10f03680-afde-11ea-9153-4831096d25ed.png" width = 480 height = 320>
 
-Right away, I can tell that the subgroups won't be very meaningful. While the 34.9% above doesn't sell me either, the plot visual is simply too close together to really partition this data. However, on the bright side, the cluster center (means) does tell a story. In cluster one, the average data point has a home goal value of 3.14 and 36.6 home shots while the away team averages 2.83 goals and 26.96 shots. This compares nicely to 3 goals and 28 shots for the home team in cluster 2 while the away team averages 2.86 goals and 34 shots.
+Right away, I can tell that the subgroups won't be very meaningful. While the K-Means reduction in sums of squares of 34.9% above doesn't exactly sell me either, the plot visual is simply too close together to really partition this data. However, on the bright side, the cluster center (means) does tell a story. In cluster one, the average data point has a home goal value of 3.14 and 36.6 home shots while the away team averages 2.83 goals and 26.96 shots. This compares nicely to 3 goals and 28 shots for the home team in cluster 2 while the away team averages 2.86 goals and 34 shots.
 This tells me that the games in cluster one give the competitive edge to the Home team. Hockey has its' fair share of even games, but also it's fair share of one-sided games. In games where the home team is dominating puck and zone possession, you'll typically see a higher goal and shot count and a lower count for both stats on the away side. In contrast, if the Away team is playing better, you'll see these numbers skew in the opposite direction. This is what we mainly see in cluster 2 for shots, although there isn't a big difference in goals (which makes sense since both goal marks are around the league average).
 
 However, any fan knows that it takes more than just shots to win a game. I can confirm this by comparing the cluster vectors to the actual game results:
@@ -603,7 +603,7 @@ Within cluster sum of squares by cluster:
 
 <img src = "https://user-images.githubusercontent.com/39016197/84828019-983fa900-afe2-11ea-884f-5b9c5bf51777.png" width = 410 height = 280>
 
-While I'm still not convinced this will be a whole lot better, the 52.1% is an improvement.
+I'll note here that the 52.1% reduction in sums of squares may seem like an achievement, it is really not. This 52.1% just means that the total variance in my data (52.1%) is explained by the clustering. Based on the shot plot above, I have a hard time imagining that much variance can be explained by this cluster. Nonetheless, we'll resume with the rest of the code:
 
 ```
 table(dt$Result, km1$cluster)
@@ -619,7 +619,7 @@ plot(dt1[c("Home_S", "Away_S")], col = km1$cluster)
 
 <img src = "https://user-images.githubusercontent.com/39016197/84828389-3895cd80-afe3-11ea-91a0-44567691a09e.png" width = 410 height = 280>
 
-Based on the above results, 3 clusters doesn't fair any better. The K-Means analysis still has a tough time deciding on which games are wins and which games on losses. With that said, I'll continue my analysis while only viewing the 2 clusters.
+Based on the above results, 3 clusters doesn't fair any better. The K-Means analysis still has a tough time deciding on which games are wins and which games on losses. To be fair, we can't exactly expect great results when we are clustering 2 categories into 3 clusters, but it never hurts to run a code and learn by experience. With that said, I'll continue my analysis while only viewing the 2 clusters.
 
 <b> Shots & Goals for Home & Away Teams - Standardized Data </b><p></p>
 
@@ -656,7 +656,7 @@ Within cluster sum of squares by cluster:
 ```
 <img src = "https://user-images.githubusercontent.com/39016197/84956493-8e877580-b0b6-11ea-9260-a684664577c0.png" width = 410 height = 270>
 
-Now, 19.2% doesn't exactly scream "fixed!" to me. The plot also had overlapping data, which makes sense to me since I don't think there is a perfect way to differeniate wins and losses based on goals and shots alone. But surprisingly enough, the K-means analysis did a much better job of sorting the Wins and Losses out:
+Now, 19.2% doesn't exactly scream "fixed!" to me. The plot also has overlapping data, which makes sense to me since I don't think there is a perfect way to differeniate wins and losses based on goals and shots alone. But surprisingly enough, the K-means analysis did a much better job of sorting the Wins and Losses out:
 ```
 table(dt$Result, km$cluster)
    
@@ -686,8 +686,16 @@ plot(dt1[c("Home_S", "Away_S")], col = dt$Result)
 ```
 <img src = "https://user-images.githubusercontent.com/39016197/84957197-f2f70480-b0b7-11ea-999c-82b0885127df.png" width = 410 height = 260>
 
-As we can see, K-Means analysis did a much better job in identifying 2 subgroups among the data. Well enough, in fact, where only 46 of the games were placed incorrectly.
+As we can see, K-Means analysis did a much better job in identifying 2 subgroups among the data. Well enough, in fact, where only 46 of the games were placed incorrectly. But we're not done yet - I didn't go through the effort of pulling the rest of my data if 100% if NHL games can be predicted by shots and goals alone! In fact, the above results are surprisingly accurate for what I would expect to see. If we take a closer look my test data, we can see that out of the 577 Home wins, only 297 of the Home Teams actually outshot their opponents:
 
+```
+> sum(dt$Result=="W")
+[1] 577
+> sum(dt$Result=="W" & dt$Home_S > dt$Away_S)
+[1] 297
+```
+
+I expect that (and confirmed from the above goal plots) that the K-means clustering analysis only really had success here from the goal count in each game. This will be different in real day by day analysis since we don't know how many goals are scored each game - but only how many goals or the average that the team has already scored so far that season. If you're like me and craving more of this analysis, you'll definitely want to check out Part 2 of this project!
 
 # Challenges
 
@@ -708,13 +716,14 @@ dt[is.na(dt)] = c(mean(dt$Home_OFS[dt$Home=="San Jose Sharks"], na.rm = TRUE), m
 
 Another issue came from dealing with Overtime and Shootouts. Since I'm tracking points for each game, I needed a way to determine if a loser gets 1 or 0 points. By reading the box score text, I set up a function (as shown in the function section) to read "OT" and "Shootout" and while this worked, I later had to modify this since most Ottawa players were represented by OTT in the box score.
 
-Using RVest itself was not challenging but presented a learning curve. Grabbing some of the tables didn't take long to figure out, but the tables wrapped in comments were certainly more challenging to figure out. Automating this web scraper was also a challenge, but with some guidance from my professor Kellen Sorauf, I was able to get this working with how I needed it to.
+Using RVest itself was not challenging but presented a learning curve. Grabbing some of the tables didn't take long to figure out, but the tables wrapped in comments were certainly more challenging to figure out. Automating this web scraper was also a challenge, but with some guidance from my professor Kellen Sorauf, I was able to get this working with how I needed it to. With a confort with web scraping now in my repertoire, I'm definitely looking forward to using this skill more.
 
 # Project Summary
 
-To summarize the above, scraping all of the data needed for a project from scratch is a lot of work! Building lines of code and functions to incorporate them took up more time than I had anticipated. I ended up with 44 RMD scripts to complete the data side of this project, and 28 different data sets for back up data in case of incorrect data. Not only did I have to constantly check the quality of the data, but I had to consistenly debug until my script yieled perfect results. Especially when I incorporated data structuring and cleaning into my web scraping code. And after all of that, I wasn't even done since I wanted the right data for day by day predictions. However, keeping up with the data and aggregating stats as needed will be much easier now that I already have base set of data, as well as a script that allows me to pull the exact data I want within minutes. In fact, tracking day by day stats for <i>next </i> season will be much easier and less time consuming to manually input data. This will allow myself to add even more data than I didn't have the time to put in my training set. 
+To summarize the above, scraping all of the data needed for a project from scratch is a lot of work! Building lines of code and functions to incorporate them took up more time than I had anticipated. I ended up with 44 RMD scripts to complete the data side of this project, and 28 different data sets for back up data in case of incorrect data. Not only did I have to constantly check the quality of the data, but I had to consistenly debug until my script yieled perfect results. Especially when I incorporated data structuring and cleaning into my web scraping code. And after all of that, I wasn't even done since I wanted the right data for day by day predictions. Once I gathered all of the data, I needed to then aggregate all of the stats and apply a lag so that they were building cumulatively for each game. With that lag meant that I had NA values for every team's first game of the season. But how do you predict a team's first game of the season without any current season data? For a quick fix, I used each team's average stat from the previous season. If I had a bit more time, I would have liked to researched how each team improvement over the offseason and subjectively inflated/deflated these team's averaged stats to get a better read on how they would perform for the predicting season.
 
-Within the time frame of this project, I feel that I have collected and modified enough stats to make a good run at successfully (or should I state "reasonably") predicting NHL games for the 2019-2020 season with only team stats prior to that game. I've pulled all of the variables that I thought was relevant to the outcome of each game. With 2,542 rows of training data that I've colleceted from scratch and 50 columns of data to help support my model to predict NHL games, I'm excited to dive into Part 2 of my project that will really allow me to dive into analysis of this data.
+However, keeping up with the data and aggregating stats as needed will be much easier now that I already have base set of data, as well as a script that allows me to pull the exact data I want within minutes. In fact, tracking day by day stats for <i>next </i> season will be much easier and less time consuming to pull only the short amount of data required per game. This also includes manual data, and will allow myself to add even more data than I have since I didn't have the time to put in my training set. This data may include the last 10 games winning % against opponent, faceoffs, health, and much more.
 
+Within the time frame of this project, I feel that I have collected and modified enough stats to make a good run at successfully (or should I state "reasonably") predicting NHL games for the 2019-2020 season with only team stats prior to that game. I've pulled all of the variables that I thought was relevant to the outcome of each game from www.hockey-reference.com, and I may look at additional sites in the near future for additional stats. With 2,542 rows of training data that I've colleceted from scratch and 50 columns of data to help support my model to predict NHL games, I'm excited to dive into Part 2 of my project that will really allow me to explore the analysis of this data.
 
 Now that I have all of my data ready to go, be sure to look at my Part 2 repository for Predicting games using Machine Learning!
