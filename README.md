@@ -1,6 +1,6 @@
 # Web Scraping NHL Data for Prediction using MachineLearning
 
-<b> Project Background</b>: Using data from the 2017-2018 & 2018-2019 NHL Seasons, I will train a Machine Learning model to predict the games (at least the ones completed before quarantine) for the 2019-2020 season. This Project will be completed in two different parts - Web Scraping (data collection & cleaning) and Predicting using Machine Learning. My model will learn based on the aggregated stats of a given team, at any time in a season, before the scheduled outcome occurs. Using the Rvest package, I will create a web scraper to gather all the data I can from each NHL game for each season. At the time of writing, I'm exclusively using hockey-reference.com for this data. Once my data is pulled, the stats from each game include: Date of the game, Home Team, Away Team, Result (training only - reflects Home Team), Home Goals, Home Shots, Home PIM, Away Goals, Away PIM, Away Shots, Home Corsi (all situations), Away Corsi, Home Offensive Zone Start %, Away Offensive Zone Start %, Home Hits, Away Hits, Home Blocked Shots, Away Blocked Shots, Game Length (Regulation, Overtime, or Shootout), Empty_Netters (reflects empty net goals for the winning team), Home Save %, Away Save %, Home Shooting %, Away Shooting %, Home SPSV%/PDO, Away SPSV%/PDO, Home Goals Against, Away Goals Against, Home Differential, Away Differential, Home Wins, Away Wins, Home Shots Against, Away Shots Against, Home Points and Away Points. Prediction results will depend on whether it was the home or away team that won the game. 
+<b> Project Background</b>: Using data from the 2017-2018 & 2018-2019 NHL Seasons, I will train a Machine Learning model to predict the games (at least the ones completed before quarantine) for the 2019-2020 season. This Project will be completed in two different parts - Web Scraping (data collection & cleaning) and Predicting using Machine Learning. My model will learn based on the aggregated stats of a given team, at any time in a season, before the scheduled outcome occurs. Using the Rvest package, I will create a web scraper to gather all the data I can from each NHL game for each season. I'm exclusively using hockey-reference.com for this data. Once my data is pulled, the stats from each game include: Date of the game, Home Team, Away Team, Result (training only - reflects Home Team), Home Goals, Home Shots, Home PIM (Penalties in Minutes), Away Goals, Away PIM, Away Shots, Home Corsi (all situations), Away Corsi, Home Offensive Zone Start %, Away Offensive Zone Start %, Home Hits, Away Hits, Home Blocked Shots, Away Blocked Shots, Game Length (Regulation, Overtime, or Shootout), Empty_Netters (reflects empty net goals for the winning team), Home Save %, Away Save %, Home Shooting %, Away Shooting %, Home SPSV%/PDO, Away SPSV%/PDO, Home Goals Against, Away Goals Against, Home Differential, Away Differential, Home Wins, Away Wins, Home Shots Against, Away Shots Against, Home Points and Away Points. Prediction results will depend on whether it was the home or away team that won the game. 
 <p></p>
 
 # Libraries Used:
@@ -53,7 +53,7 @@ ANA_ADV = function(x) {
 }
 ```
 
-This code was a bit tricky to figure out compared to the basic player stats table for each team. All of the advanced stats tables were embedded in html comments as opposed to table tags - meaning I figure had to read the comment texts and collapse. Again, this code was reproduced 30 more times to capture this new table's ID for every team. The inc_roster code/function will also be explained below, and columns 5, 9, 10, and 11 represent Corsi %, Offensive Zone %, Hits and Blocked Shots. 
+This code was a bit tricky to figure out compared to the basic player stats table for each team. All of the advanced stats tables were embedded in html comments as opposed to table tags - meaning I figure had to read the comment texts and collapse. Again, this code was reproduced 30 more times to capture this advanced table's ID for every team. The inc_roster code/function will also be explained below, and columns 5, 9, 10, and 11 represent Corsi %, Offensive Zone %, Hits and Blocked Shots. 
 <p></p>
 
 Pulling in the date at each url:
@@ -623,7 +623,7 @@ Based on the above results, 3 clusters doesn't fair any better. The K-Means anal
 
 <b> Shots & Goals for Home & Away Teams - Standardized Data </b><p></p>
 
-There were a few options that I had to work with here for data manipulation. I could normalize the data - which I actually did intially, and ran better results than the outcomes above. However, in the case of K-Means, standardizing the data works much better and yieled promising results.
+There were a few options that I had to work with here for data manipulation. I could normalize the data - which I actually did intially, and ran better results than the outcomes above. However, in the case of K-Means, standardizing the data works much better and yielded promising results.
 
 The below code is an easy way to standardize data using my data's z-score:
 ```
@@ -668,23 +668,23 @@ table(dt$Result, km$cluster)
 ```
 plot(dt1[c("Home_G", "Away_G")], col = km$cluster)
 ```
-<img src = "https://user-images.githubusercontent.com/39016197/84956914-5d5b7500-b0b7-11ea-919a-b4ebb28f480f.png" width = 410 height = 260>
+<img src = "https://user-images.githubusercontent.com/39016197/84956914-5d5b7500-b0b7-11ea-919a-b4ebb28f480f.png" width = 380 height = 240>
 
 ```
 plot(dt1[c("Home_G", "Away_G")], col = dt$Result)
 ```
-<img src = "https://user-images.githubusercontent.com/39016197/84957097-bdeab200-b0b7-11ea-9893-6e24df7e6c1e.png" width = 410 height = 260>
+<img src = "https://user-images.githubusercontent.com/39016197/84957097-bdeab200-b0b7-11ea-9893-6e24df7e6c1e.png" width = 380 height = 240>
             
 ```
 plot(dt1[c("Home_S", "Away_S")], col = km$cluster)
 ```
 
-<img src = "https://user-images.githubusercontent.com/39016197/84957163-dbb81700-b0b7-11ea-81f9-8d1f8c8520ef.png" width = 410 height = 260>
+<img src = "https://user-images.githubusercontent.com/39016197/84957163-dbb81700-b0b7-11ea-81f9-8d1f8c8520ef.png" width = 380 height = 240>
 
 ```
 plot(dt1[c("Home_S", "Away_S")], col = dt$Result)
 ```
-<img src = "https://user-images.githubusercontent.com/39016197/84957197-f2f70480-b0b7-11ea-999c-82b0885127df.png" width = 410 height = 260>
+<img src = "https://user-images.githubusercontent.com/39016197/84957197-f2f70480-b0b7-11ea-999c-82b0885127df.png" width = 380 height = 240>
 
 As we can see, K-Means analysis did a much better job in identifying 2 subgroups among the data. Well enough, in fact, where only 46 of the games were placed incorrectly. But we're not done yet - I didn't go through the effort of pulling the rest of my data if 100% if NHL games can be predicted by shots and goals alone! In fact, the above results are surprisingly accurate for what I would expect to see. If we take a closer look my test data, we can see that out of the 577 Home wins, only 297 of the Home Teams actually outshot their opponents:
 
