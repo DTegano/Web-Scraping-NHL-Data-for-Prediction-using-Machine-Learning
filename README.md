@@ -701,7 +701,7 @@ I expect that (and confirmed from the above goal plots) that the K-means cluster
 
 There were several obstacles that presented itself during part 1 of this project. The use of functions not only cut down on the # of lines I would need for each game, but it also helped solve some of the issues I ran into early. When teams play multiple goaltenders, the number of columns in the player table is increased and shifts the coding required to grab only the TOTAL row (since I only care about the total team stats for the time being). Using ifelse and nrow(x) helped solved this problem initially, but I did not take into account that the Player Roster could also be less than the League requirement. I will admit that there were a few random games messing up all of my code that did fit this criteria that made me chuckle. While I was fully confident that teams could not play with an incomplete roster, turns out some actually did. When pulling data, I realized that one of my data sets had some NA values. Upon digging, one of the games with this problem was when the Anaheim Ducks played with only 5 Defensemen due to a lineup sheet mistake. Silly Anaheim, and silly me for not producing a better code initially to avoid this mistake:
 
-<img src = "https://user-images.githubusercontent.com/39016197/83693501-6fb3ba00-a5b3-11ea-9684-dc039587557f.png" width = 580 height = 250>
+<img src = "https://user-images.githubusercontent.com/39016197/83693501-6fb3ba00-a5b3-11ea-9684-dc039587557f.png" width = 580 height = 220>
 <i>*The above image retreived from https://www.nhl.com/news/anaheim-ducks-edmonton-oilers-game-recap/c-306275970. </i>
 <p></p>
 
