@@ -29,7 +29,8 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 ```{r}
 library(rmarkdown)
-
+```
+```{r}
 ## Libraries ##
 library(rvest) # web scraping
 library(readxl) # importing xls & xlsx files
