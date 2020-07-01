@@ -1,0 +1,858 @@
+---
+title: "2018-2019 Part 1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+library(rmarkdown)
+
+## Libraries ##
+library(rvest) # web scraping
+library(readxl) # importing xls & xlsx files
+library(dplyr) # used for nesting/chaining
+library(tidyr) # data cleaning
+library(stringr) # Used to detect OT and Shootouts
+library(writexl) # exporting to xlsx file
+library(RCurl) # Checking URL
+library(chron) # Date conversion to Time
+```
+# Set up Directories
+
+getwd()
+
+setwd("C:/Users/David/Documents/MSDS 692/data")
+
+# Set up functions to grab basic stats for each team
+```{r}
+GET_ANA = function (x) {
+    table = x %>%
+        html_node(xpath = '//*[@id="ANA_skaters"]') %>%
+        html_table()
+    names(table) = lapply(table[1,], as.character)
+    table = table[-1,-1]
+    table = table[multi_roster(table), c(2,6,14)]
+    }
+
+
+GET_ARI = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="ARI_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_BOS = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="BOS_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_BUF = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="BUF_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_CGY = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="CGY_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_CAR = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="CAR_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_CHI = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="CHI_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_COL = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="COL_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_CBJ = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="CBJ_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_DAL = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="DAL_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_DET = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="DET_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_EDM = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="EDM_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_FLA = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="FLA_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_LAK = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="LAK_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_MIN = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="MIN_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_MTL = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="MTL_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_NSH = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="NSH_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_NJD = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="NJD_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_NYI = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="NYI_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_NYR = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="NYR_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_OTT = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="OTT_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_PHI = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="PHI_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_PIT = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="PIT_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_SJS = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="SJS_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_STL = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="STL_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_TBL = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="TBL_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_TOR = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="TOR_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_VAN = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="VAN_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_VEG = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="VEG_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_WSH = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="WSH_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+GET_WPG = function (x) {
+  table = x %>%
+    html_node(xpath = '//*[@id="WPG_skaters"]') %>%
+    html_table()
+  names(table) = lapply(table[1,], as.character)
+  table = table[-1,-1]
+  table = table[multi_roster(table), c(2,6,14)]
+}
+
+# Get Advanced Team Stats
+
+ANA_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#ANA_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+ARI_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#ARI_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+BOS_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#BOS_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+BUF_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#BUF_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+CGY_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#CGY_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+CAR_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#CAR_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+CHI_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#CHI_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+COL_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#COL_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+CBJ_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#CBJ_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+DAL_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#DAL_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+DET_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#DET_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+EDM_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#EDM_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+FLA_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#FLA_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+LAK_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#LAK_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+MIN_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#MIN_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+MTL_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#MTL_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+NSH_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#NSH_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+NJD_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#NJD_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+NYI_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#NYI_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+NYR_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#NYR_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+OTT_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#OTT_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+PHI_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#PHI_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+PIT_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#PIT_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+SJS_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#SJS_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+STL_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#STL_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+TBL_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#TBL_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+TOR_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#TOR_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+VAN_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#VAN_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+VEG_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#VEG_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+WSH_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#WSH_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+WPG_ADV = function(x) {
+  table = x %>%
+    html_nodes(xpath = '//comment()') %>%
+    html_text() %>%
+    paste(collapse = '') %>%
+    read_html() %>%
+    html_node('table#WPG_adv') %>%
+    html_table()
+  table = table[inc_roster(table), c(5,9,10,11)]
+}
+
+# Updated Other Functions and variables
+date_f = function(x) {
+  x %>%
+    html_node("div.scorebox_meta") %>%
+    html_node("div") %>%
+    html_text()
+}
+
+away_team_name = function(x) {
+  x %>%
+    html_node(xpath = '//*[@id="content"]/div[2]/div[1]/div[1]/strong/a') %>%
+    html_text()
+}
+
+home_team_name = function(x) {
+  x %>%
+    html_node(xpath = '//*[@id="content"]/div[2]/div[2]/div[1]/strong/a') %>%
+    html_text()
+}
+
+away_score_f = function(x) {
+  x %>%
+    html_node(xpath = '//*[@id="content"]/div[2]/div[1]/div[2]/div') %>%
+    html_text() %>%
+    as.numeric()
+}
+
+home_score_f = function(x) {
+  x %>%
+    html_node(xpath = '//*[@id="content"]/div[2]/div[2]/div[2]/div') %>%
+    html_text() %>%
+    as.numeric()
+}
+
+game_clean = function(w,x,y,z) {
+  d = cbind(w,x)
+  d = cbind(result,d)
+  t= cbind(home_team, away_team)
+  d = cbind(t,d)
+  d = cbind(dat, d)
+  q = cbind(y,z)
+  d = cbind(d, q)
+  d = cbind(d,reg)
+  d = cbind(d,emp)
+}
+
+# Regulation check
+
+Read_Boxscore = function(x) {
+  x %>%
+    html_node(xpath = '//*[@id="scoring"]') %>%
+    html_text()
+}
+
+Regulation = function(x) {
+  y = str_detect(Read_Boxscore(x), "OT Period")
+  z = str_detect(Read_Boxscore(x), "Shootout")
+  ifelse(y == TRUE, "O", ifelse(z == TRUE, "S", "R"))
+}
+
+emp_net = function(x) {
+    str_count(Read_Boxscore(x), "EN")
+}
+
+# Since multiple goalies affect the number of rows
+
+multi_roster = function(x) {
+    ifelse(nrow(x)!=20,nrow(x),20)
+    }
+
+inc_roster = function(x) {
+    ifelse(nrow(x)!=190,nrow(x)-8,182)
+}
+
+cnames = c("Date", "Home", "Away", "Result", "Home_G", "Home_PIM", "Home_S", "Away_G", "Away_PIM", "Away_S", "Home_Corsi", "Home_OFS", "Home_H", "Home_BS", "Away_Corsi", "Away_OFS", "Away_H", "Away_BS", "Game_Length", "Empty_Netters")
+
+
+read_atn = function(x) {
+    tx = x %>%
+        html_node(xpath = '//*[@id="nav"]/div/div/a') %>%
+        html_text() 
+    substr(tx, start = 1, stop = 3)
+    
+}
+
+read_htn = function(x) {
+    tx = x %>%
+        html_node(xpath = '//*[@id="nav"]/div/div/a') %>%
+        html_text() 
+    substr(tx, start = 8, stop = 10)
+}
+
+# Web Scraping all games
+date_year = c(2018)
+date_month = sprintf("%02d", c(10:12))
+date_day = sprintf("%02d", c(1:31))
+game_num = c(0:0)
+
+team_abrev = c('ANA','ARI','BOS','BUF','CAR','CBJ','CGY','CHI','COL','DAL','DET','EDM','FLA','LAK','MIN','MTL','NJD','NSH','NYI','NYR','OTT','PHI','PIT','SJS','STL','TBL','TOR','VAN','VEG','WPG','WSH')
+
+for (year in date_year) {
+  for (date in date_month) {
+    for (day in date_day) {
+      for (game_n in game_num) {
+        for (team in team_abrev) {
+          url = paste("https://www.hockey-reference.com/boxscores/", year, date, day, game_n, team, '.html', sep = '')
+          if(url.exists(url) == TRUE) {
+            game = read_html(url)
+            dat = date_f(game)
+            away_team = away_team_name(game)
+            home_team = home_team_name(game)
+            away_score = away_score_f(game)
+            home_score = home_score_f(game)
+            result = ifelse(away_score>home_score, "L", "W")
+            result = as.data.frame(result)
+            reg = Regulation(game)
+            emp = emp_net(game)
+            ateam = read_atn(game)
+            hteam = read_htn(game)
+            w = get(paste("GET_",hteam,sep = ''))(game)
+            x = get(paste("GET_",ateam,sep = ''))(game)
+            y = get(paste(hteam,"_ADV",sep = ''))(game)
+            z = get(paste(ateam,"_ADV",sep = ''))(game)
+            d = assign(paste(year, date, day, game_n, hteam, ateam, "_Table", sep = ''), game_clean(w,x,y,z))
+          }
+        }
+      }
+    }
+  }
+}
+
+# attempt to combine
+
+rm(w)
+rm(x)
+rm(y)
+rm(z)
+rm(d)
+rm(result)
+
+
+dfs = sapply(.GlobalEnv, is.data.frame) 
+dfs
+
+dt = do.call(rbind, mget(names(dfs)[dfs]))
+names(dt) = cnames
+
+# apply additional variables
+dt$Home_G = as.numeric(dt$Home_G)
+dt$Home_S = as.numeric(dt$Home_S)
+dt$Away_G = as.numeric(dt$Away_G)
+dt$Away_S = as.numeric(dt$Away_S)
+dt$Home_BS = as.numeric(dt$Home_BS)
+dt$Away_BS = as.numeric(dt$Away_BS)
+
+dt$Home_SV = ifelse(dt$Empty_Netters!=0 & dt$Result=="L",((dt$Away_S - dt$Empty_Netters) - (dt$Away_G - dt$Empty_Netters))/(dt$Away_S - dt$Empty_Netters), (dt$Away_S - dt$Away_G)/dt$Away_S)
+dt$Away_SV = ifelse(dt$Empty_Netters!=0 & dt$Result=="W",((dt$Home_S - dt$Empty_Netters) - (dt$Home_G - dt$Empty_Netters))/(dt$Home_S - dt$Empty_Netters), (dt$Home_S - dt$Home_G)/dt$Home_S)
+dt$Home_SH = dt$Home_G/dt$Home_S
+dt$Away_SH = dt$Away_G/dt$Away_S
+dt$Home_PDO = dt$Home_SV + dt$Home_SH
+dt$Away_PDO = dt$Away_SV + dt$Away_SH
+
+dt$Home_GA = dt$Away_G
+dt$Away_GA = dt$Home_G
+dt$Home_DIF = dt$Home_G - dt$Away_G
+dt$Away_DIF = dt$Away_G - dt$Home_G
+dt$Home_W = ifelse(dt$Result == "W", 1, 0)
+dt$Away_W = ifelse(dt$Result == "L", 1, 0)
+dt$Home_SA = dt$Away_S
+dt$Away_SA = dt$Home_S
+
+dt$Home_P = ifelse(dt$Result == "W", 2, ifelse(dt$Result == "L" &  dt$Game_Length == "R", 0,1))
+dt$Away_P = ifelse(dt$Result == "L", 2, ifelse(dt$Result == "W" & dt$Game_Length == "R", 0,1))
+
+
+#Time Sort
+dt = separate(dt, col = 'Date', into = c('Day', 'Year', "Time"), sep = ",")
+
+dt = unite_(dt, col = "Date", from = c("Day", "Year"), sep = "")
+
+dt$Date = as.Date(dt$Date,format='%B %d %Y')
+
+dt =  dt[order(dt$Date),]
+```
+write_xlsx(dt, "C:/Users/David/Documents/MSDS 692/data\\2018-2019 Part 1.xlsx")
