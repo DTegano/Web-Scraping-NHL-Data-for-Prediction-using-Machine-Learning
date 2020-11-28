@@ -53,7 +53,7 @@ ANA_ADV = function(x) {
 }
 ```
 
-This code was a bit tricky to figure out compared to the basic player stats table for each team. All of the advanced stats tables were embedded in html comments as opposed to table tags - meaning I figure had to read the comment texts and collapse. Again, this code was reproduced 30 more times to capture this advanced table's ID for every team. The inc_roster code/function will also be explained below, and columns 5, 9, 10, and 11 represent Corsi %, Offensive Zone %, Hits and Blocked Shots. 
+This code was a bit tricky to figure out compared to the basic player stats table for each team. All of the advanced stats tables were embedded in html comments as opposed to table tags - meaning I had to read the comment texts and collapse. Again, this code was reproduced 30 more times to capture this advanced table's ID for every team. The inc_roster code/function will also be explained below, and columns 5, 9, 10, and 11 represent Corsi %, Offensive Zone %, Hits and Blocked Shots. 
 <p></p>
 
 Pulling in the date at each url:
